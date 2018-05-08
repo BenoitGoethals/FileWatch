@@ -17,7 +17,7 @@ namespace FileWatch
         [DllImport("advapi32.dll", SetLastError = true)]
         private static extern bool SetServiceStatus(IntPtr handle, ref ServiceStatus serviceStatus);
         private int eventId = 1;
-      
+     private readonly Watcher _watcher = new Watcher() { SourcePath = "c:/source", DestPath = "c:/archive" };
         public ServiceFile()
         {
             InitializeComponent();
@@ -36,6 +36,7 @@ namespace FileWatch
         {
             OnStart(args);
             Console.WriteLine("Press any key to exit...");
+            _watcher.Watch();
             Console.ReadLine();
             OnStop();
         }
@@ -47,8 +48,8 @@ namespace FileWatch
             timer.Interval = 60000; // 60 seconds  
             timer.Elapsed += new System.Timers.ElapsedEventHandler(this.OnTimer);
             timer.Start();
-            Watcher watcher = new Watcher() { Path = "c:/temp" };
-
+          
+          
             // Update the service state to Start Pending.  
             ServiceStatus serviceStatus = new ServiceStatus();
             serviceStatus.dwCurrentState = ServiceState.SERVICE_START_PENDING;
