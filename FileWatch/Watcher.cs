@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,12 +10,13 @@ namespace FileWatch
 {
     public class Watcher
     {
-        private readonly FileSystemWatcher _watcher=new FileSystemWatcher();
+        private static readonly FileSystemWatcher _watcher=new FileSystemWatcher();
 
         public string SourcePath { get; set; }
 
         public string DestPath { get; set; }
 
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public void Watch()
         {
 
@@ -23,17 +25,17 @@ namespace FileWatch
             _watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
                                                             | NotifyFilters.FileName | NotifyFilters.DirectoryName;
             _watcher.Filter = "*.*";
-          
-            _watcher.Created += OnChanged;
-
-            _watcher.Changed += OnChanged;
-            _watcher.IncludeSubdirectories = true;
+            _watcher.Changed += new FileSystemEventHandler(OnChanged);
+           // _watcher.Created += new FileSystemEventHandler(OnChanged);
+           // _watcher.Deleted += new FileSystemEventHandler(OnChanged);
+            //  _watcher.IncludeSubdirectories = true;
             _watcher.EnableRaisingEvents = true;
+            Console.ReadLine();
         }
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-           if( File.Exists(e.FullPath))
+           if( File.Exists(e.FullPath) )
             {
             string extension = Path.GetExtension(e.Name)?.Substring(1);
             if (!String.IsNullOrEmpty(extension))
@@ -57,11 +59,10 @@ namespace FileWatch
 
         private void CopyFil(string source,string dest,string ext)
         {
-            using (_watcher)
-            {
+       
                 File.Copy($"{SourcePath}/{source}", $"{DestPath}/{ext}/{Guid.NewGuid()}{dest}");
                 File.Delete($"{SourcePath}/{source}");
-            }
+           
             
         }
 
