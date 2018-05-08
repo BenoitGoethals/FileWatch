@@ -36,7 +36,8 @@ namespace FileWatch
         private void OnChanged(object source, FileSystemEventArgs e)
         {
            if( File.Exists(e.FullPath) )
-            {
+           {
+               Task.Delay(10000);
             string extension = Path.GetExtension(e.Name)?.Substring(1);
             if (!String.IsNullOrEmpty(extension))
             {
@@ -47,7 +48,22 @@ namespace FileWatch
         }
 
 
-
+        private bool FileIsReady(string path)
+        {
+            //One exception per file rather than several like in the polling pattern
+            try
+            {
+                //If we can't open the file, it's still copying
+                using (var file = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    return true;
+                }
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+        }
         private void Created(string folder)
         {
             if (!Directory.Exists($"{DestPath}/{folder}"))
@@ -59,7 +75,7 @@ namespace FileWatch
 
         private void CopyFil(string source,string dest,string ext)
         {
-       
+                if(!FileIsReady($"{SourcePath}/{source}")) return;
                 File.Copy($"{SourcePath}/{source}", $"{DestPath}/{ext}/{Guid.NewGuid()}{dest}");
                 File.Delete($"{SourcePath}/{source}");
            
