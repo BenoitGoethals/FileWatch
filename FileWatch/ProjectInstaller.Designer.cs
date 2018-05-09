@@ -33,7 +33,7 @@
             // 
             // serviceWATCHProcessInstaller
             // 
-            this.serviceWATCHProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalService;
+            this.serviceWATCHProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.serviceWATCHProcessInstaller.Password = null;
             this.serviceWATCHProcessInstaller.Username = null;
             // 

@@ -18,7 +18,7 @@ namespace FileWatch
         [DllImport("advapi32.dll", SetLastError = true)]
         private static extern bool SetServiceStatus(IntPtr handle, ref ServiceStatus serviceStatus);
         private int eventId = 1;
-     private readonly Watcher _watcher = new Watcher() { SourcePath = "c:/source", DestPath = "c:/archive" };
+        private readonly Watcher _watcher = new Watcher() { SourcePath = "c:/source", DestPath = "c:/archive" };
         public ServiceFile()
         {
             InitializeComponent();
@@ -30,6 +30,7 @@ namespace FileWatch
             }
             eventLogWatch.Source = "MyWatcherSource";
             eventLogWatch.Log = "MyNewWatcherLog";
+            _watcher.eventLog = eventLogWatch;
         }
 
 
@@ -37,6 +38,7 @@ namespace FileWatch
         {
             OnStart(args);
             Console.WriteLine("Press any key to exit...");
+            
             _watcher.Watch();
             Console.ReadLine();
             OnStop();
@@ -63,6 +65,7 @@ namespace FileWatch
             serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
             eventLogWatch.WriteEntry("In OnStart Running");
+            _watcher.Watch();
         }
 
         protected override void OnStop()

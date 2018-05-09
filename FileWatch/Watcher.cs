@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;
@@ -15,6 +16,7 @@ namespace FileWatch
         public string SourcePath { get; set; }
 
         public string DestPath { get; set; }
+        public EventLog eventLog { get; internal set; }
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public void Watch()
@@ -43,7 +45,8 @@ namespace FileWatch
             {
                 Created(extension);
                 CopyFil(e.Name, e.Name, extension);
-            }
+                   
+                }
             }
         }
 
@@ -78,8 +81,8 @@ namespace FileWatch
                 if(!FileIsReady($"{SourcePath}/{source}")) return;
                 File.Copy($"{SourcePath}/{source}", $"{DestPath}/{ext}/{Guid.NewGuid()}{dest}");
                 File.Delete($"{SourcePath}/{source}");
-           
-            
+            eventLog.WriteEntry($"Copy {SourcePath}/{source}, {DestPath}/{ext}/{Guid.NewGuid()}{dest}");
+
         }
 
     }
