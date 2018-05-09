@@ -30,7 +30,7 @@ namespace FileWatch
            // _watcher.Deleted += new FileSystemEventHandler(OnChanged);
             //  _watcher.IncludeSubdirectories = true;
             _watcher.EnableRaisingEvents = true;
-            Console.ReadLine();
+        
         }
 
         private void OnChanged(object source, FileSystemEventArgs e)

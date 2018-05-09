@@ -33,13 +33,16 @@
             // 
             // serviceWATCHProcessInstaller
             // 
-            this.serviceWATCHProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
+            this.serviceWATCHProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalService;
             this.serviceWATCHProcessInstaller.Password = null;
             this.serviceWATCHProcessInstaller.Username = null;
             // 
             // serviceFileWatcherInstaller
             // 
-            this.serviceFileWatcherInstaller.ServiceName = "ServiceFile";
+            this.serviceFileWatcherInstaller.Description = "Filewatcher";
+            this.serviceFileWatcherInstaller.DisplayName = "Filewatcher";
+            this.serviceFileWatcherInstaller.ServiceName = "FileWatcher";
+            this.serviceFileWatcherInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
             // 

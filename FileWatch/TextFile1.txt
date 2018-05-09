@@ -87,3 +87,4 @@ namespace FileWatch
         public int dwWaitHint;
     };
 }
+installutil.exe /u FileWatch.exe

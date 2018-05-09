@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
@@ -22,13 +23,13 @@ namespace FileWatch
         {
             InitializeComponent();
             eventLogWatch = new System.Diagnostics.EventLog();
-            if (!System.Diagnostics.EventLog.SourceExists("MySource"))
+            if (!System.Diagnostics.EventLog.SourceExists("MyWatcherSource"))
             {
                 System.Diagnostics.EventLog.CreateEventSource(
-                    "MySource", "MyNewLog");
+                    "MyWatcherSource", "MyNewWatcherLog");
             }
-            eventLogWatch.Source = "MySource";
-            eventLogWatch.Log = "MyNewLog";
+            eventLogWatch.Source = "MyWatcherSource";
+            eventLogWatch.Log = "MyNewWatcherLog";
         }
 
 
@@ -42,7 +43,9 @@ namespace FileWatch
         }
         protected override void OnStart(string[] args)
         {
-            eventLogWatch.WriteEntry("In OnStart");
+            Creat(_watcher.SourcePath);
+            Creat(_watcher.DestPath);
+            eventLogWatch.WriteEntry("In OnStart FileWather");
             // Set up a timer to trigger every minute.  
             System.Timers.Timer timer = new System.Timers.Timer();
             timer.Interval = 60000; // 60 seconds  
@@ -59,7 +62,7 @@ namespace FileWatch
             // Update the service state to Running.  
             serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
-
+            eventLogWatch.WriteEntry("In OnStart Running");
         }
 
         protected override void OnStop()
@@ -71,6 +74,16 @@ namespace FileWatch
         {
             // TODO: Insert monitoring activities here.  
             eventLogWatch.WriteEntry("Monitoring the System", EventLogEntryType.Information, eventId++);
+        }
+
+
+
+        private void Creat(string folder)
+        {
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
         }
     }
 }
